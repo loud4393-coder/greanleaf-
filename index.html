@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GREENLEAF — VIP Eco Cosmetics</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-main: #FFFFFF;
+            --bg-secondary: #F8FAF9;
+            --primary-emerald: #0F766E;
+            --primary-emerald-hover: #0D645E;
+            --dark-green: #064E3B;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --border-color: #E5E7EB;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(15, 118, 110, 0.08);
+            --radius-main: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-secondary);
+            color: var(--text-main);
+            padding-bottom: 85px;
+            overflow-x: hidden;
+        }
+
+        /* SVG Icons Styling */
+        .icon-svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* --- Header --- */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--bg-main);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: var(--dark-green);
+            cursor: pointer;
+        }
+
+        .brand-logo .icon-svg {
+            color: var(--primary-emerald);
+            width: 22px;
+            height: 22px;
+        }
+
+        /* Lang Toggle Switch */
+        .lang-switch {
+            display: flex;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2px;
+            border: 1px solid var(--border-color);
+        }
+
+        .lang-btn {
+            border: none;
+            background: none;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lang-btn.active {
+            background: var(--primary-emerald);
+            color: #FFFFFF;
+        }
+
+        /* Search Bar */
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            width: 16px;
+            height: 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 9px 12px 9px 36px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 13px;
+            outline: none;
+            color: var(--text-main);
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-emerald);
+            background-color: var(--bg-main);
+        }
+
+        /* --- Main Container & Views --- */
+        .container {
+            padding: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .view-page {
+            display: none;
+        }
+
+        .view-page.active {
+            display: block;
+        }
+
+        /* Banner */
+        .promo-banner {
+            background: linear-gradient(135deg, var(--dark-green), var(--primary-emerald));
+            color: #FFFFFF;
+            padding: 20px;
+            border-radius: var(--radius-main);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .promo-banner h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .promo-banner p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        /* Grid Layouts */
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 10px;
+        }
+
+        .category-card {
+            background: var(--bg-main);
+            padding: 16px;
+            border-radius: var(--radius-main);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Product Cards */
+        .product-card {
+            background: var(--bg-main);
+            border-radius: var(--radius-main);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid var(--border-color);
+            position: relative;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-fav-card {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px);
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2;
+            color: var(--text-muted);
+        }
+
+        .btn-fav-card.active {
+            color: #EF4444;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            background-color: var(--bg-secondary);
+        }
+
+        .product-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 34px;
+        }
+
+        .product-price {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--dark-green);
+            margin-bottom: 10px;
+        }
+
+        .out-of-stock-badge {
+            font-size: 11px;
+            color: #EF4444;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .btn-card-action {
+            width: 100%;
+            background-color: var(--bg-secondary);
+            color: var(--primary-emerald);
+            border: 1px solid var(--border-color);
+            padding: 8px 0;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-card-action:active {
+            background-color: var(--primary-emerald);
+            color: #FFFFFF;
+        }
+
+        /* Admin Controls on Cards */
+        .admin-card-controls {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .btn-admin-action {
+            flex: 1;
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Details & Checkout Pages --- */
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary-emerald);
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+
+        .detail-card, .checkout-section {
+            background: var(--bg-main);
+            border-radius: var(--radius-main);
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .main-gallery-img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .volume-chips {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .chip {
+            padding: 8px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--bg-secondary);
+        }
+
+        .chip.selected {
+            border-color: var(--primary-emerald);
+            background-color: var(--primary-emerald);
+            color: #FFFFFF;
+        }
+
+        .btn-add-detail {
+            width: 100%;
+            background-color: var(--primary-emerald);
+            color: #FFFFFF;
+            border: none;
+            padding: 14px 0;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        /* --- Reviews Component --- */
+        .reviews-section {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 2px;
+            color: #F59E0B;
+        }
+
+        .review-item {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .btn-delete-review {
+            background: none;
+            border: none;
+            color: #EF4444;
+            cursor: pointer;
+        }
+
+        /* --- Modals --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(3px);
+            z-index: 300;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-body {
+            background: var(--bg-main);
+            width: 90%;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: var(--radius-main);
+            padding: 20px;
+        }
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background-color: var(--bg-main);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 12px 0;
+            z-index: 200;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            width: 20%;
+        }
+
+        .nav-item.active {
+            color: var(--primary-emerald);
+        }
+
+        .admin-toolbar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+        .admin-filter, .admin-search { flex:1; min-width:130px; }
+        .admin-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px; }
+        .admin-stat { background:var(--bg-main); border:1px solid var(--border-color); border-radius:12px; padding:10px; text-align:center; }
+        .admin-stat strong { display:block; font-size:18px; }
+        .order-card { background:var(--bg-main); padding:14px; border-radius:14px; border:1px solid var(--border-color); margin-top:10px; }
+        .order-head { display:flex; justify-content:space-between; gap:8px; align-items:center; }
+        .order-meta { color:var(--text-muted); font-size:12px; margin-top:5px; }
+        .order-total { font-size:17px; font-weight:800; margin:10px 0; }
+        .order-items { margin:8px 0; padding-left:18px; font-size:13px; }
+        .status-pill { display:inline-block; padding:4px 8px; border-radius:999px; font-size:11px; font-weight:700; background:#eef2f7; }
+        .order-actions { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
+        .order-actions button { border:1px solid var(--border-color); background:var(--bg-main); border-radius:9px; padding:7px 9px; font-size:12px; }
+        .order-address { background:var(--bg-secondary, #f7f8f8); border-radius:10px; padding:9px; font-size:12px; line-height:1.45; }
+        @media (max-width:520px){ .admin-stats{grid-template-columns:repeat(2,1fr);} }
+
+        .nav-badge {
+            position: absolute;
+            top: -2px; right: 20%;
+            background-color: var(--primary-emerald);
+            color: #FFFFFF;
+            font-size: 9px;
+            font-weight: 700;
+            border-radius: 10px;
+            padding: 1px 5px;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- Top Header -->
+    <header>
+        <div class="header-top">
+            <div class="brand-logo" onclick="switchView('catalog')">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+                <span>GREENLEAF</span>
+            </div>
+            <div class="lang-switch">
+                <button class="lang-btn active" id="btn-ru" onclick="switchLanguage('ru')">RU</button>
+                <button class="lang-btn" id="btn-tk" onclick="switchLanguage('tk')">TK</button>
+            </div>
+        </div>
+        <div class="search-box">
+            <svg class="icon-svg search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="search-input" class="search-input" placeholder="Поиск космецевтики..." oninput="handleSearch()">
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 1. Catalog View -->
+        <main id="catalog-view" class="view-page active">
+            <div class="promo-banner">
+                <h3 id="banner-title">Органика & Эко-Инновации</h3>
+                <p id="banner-desc">Премиальный уход за кожей с доставкой по всему Туркменистану</p>
+            </div>
+            <div class="catalog-grid" id="catalog-grid"></div>
+        </main>
+
+        <!-- 2. Categories View -->
+        <section id="categories-view" class="view-page">
+            <div class="categories-grid" id="categories-grid"></div>
+        </section>
+
+        <!-- 3. Favorites View -->
+        <section id="favorites-view" class="view-page">
+            <div class="catalog-grid" id="favorites-grid"></div>
+        </section>
+
+        <!-- 4. Cart & Checkout View -->
+        <section id="cart-view" class="view-page">
+            <div class="checkout-section" id="cart-content"></div>
+        </section>
+
+        <!-- 5. Product Detail View -->
+        <section id="product-view" class="view-page">
+            <button class="btn-back" onclick="switchView('catalog')">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+                <span id="btn-back-text">Назад</span>
+            </button>
+            <div class="detail-card" id="detail-card-content"></div>
+        </section>
+
+        <!-- 6. Admin Panel View -->
+        <section id="admin-view" class="view-page">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:10px;">
+                <div><h2 style="margin:0;">Заказы</h2><div class="order-meta">Панель владельца Greenleaf</div></div>
+                <button class="btn-add-detail" style="width:auto; padding:8px 16px; margin:0;" onclick="openProductModal()">+ Товар</button>
+            </div>
+            <div id="admin-stats" class="admin-stats"></div>
+            <div class="admin-toolbar">
+                <input id="admin-order-search" class="form-input admin-search" placeholder="Поиск: №, имя, город..." oninput="renderAdminOrders()">
+                <select id="admin-order-filter" class="form-select admin-filter" onchange="renderAdminOrders()">
+                    <option value="all">Все заказы</option>
+                    <option value="new">Новые</option>
+                    <option value="processing">В работе</option>
+                    <option value="delivery">Доставка</option>
+                    <option value="completed">Выполнены</option>
+                    <option value="cancelled">Отменены</option>
+                </select>
+                <button class="btn-card-action" onclick="fetchAdminOrders()">↻ Обновить</button>
+            </div>
+            <div id="admin-orders-list"></div>
+        </section>
+    </div>
+
+    <!-- Product Modal (Add/Edit) -->
+    <div class="modal-overlay" id="product-modal">
+        <div class="modal-body">
+            <h3 id="modal-title" style="margin-bottom: 12px;">Товар</h3>
+            <form id="product-form" onsubmit="saveProduct(event)">
+                <input type="hidden" id="prod-id">
+                <div class="form-group">
+                    <label class="form-label">Название (RU)</label>
+                    <input type="text" id="prod-name-ru" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Название (TK)</label>
+                    <input type="text" id="prod-name-tk" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Цена (TMT)</label>
+                    <input type="number" step="0.01" id="prod-price" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Категория</label>
+                    <select id="prod-category" class="form-select">
+                        <option value="face">Уход за лицом</option>
+                        <option value="makeup">Декоративная косметика</option>
+                        <option value="perfume">Парфюмерия</option>
+                        <option value="home">Eco Home</option>
+                        <option value="health">Здоровье</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Загрузить фото из галереи</label>
+                    <input type="file" id="prod-file" accept="image/*" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Или укажите URL Изображения</label>
+                    <input type="url" id="prod-image" class="form-input" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Объёмы/Размеры (через запятую)</label>
+                    <input type="text" id="prod-volumes" class="form-input" placeholder="30 мл, 50 мл">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Описание (RU)</label>
+                    <textarea id="prod-desc-ru" class="form-textarea"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Состав (RU)</label>
+                    <input type="text" id="prod-ingredients-ru" class="form-input">
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 16px;">
+                    <button type="button" class="btn-card-action" onclick="closeProductModal()">Отмена</button>
+                    <button type="submit" class="btn-add-detail" style="margin: 0;">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" id="nav-catalog" onclick="switchView('catalog')">
+            <svg class="icon-svg" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+            <span id="nav-label-catalog">Каталог</span>
+        </button>
+        <button class="nav-item" id="nav-categories" onclick="switchView('categories')">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+            <span id="nav-label-categories">Категории</span>
+        </button>
+        <button class="nav-item" id="nav-favorites" onclick="switchView('favorites')">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            <span id="nav-label-fav">Избранное</span>
+            <span class="nav-badge hidden" id="fav-badge">0</span>
+        </button>
+        <button class="nav-item" id="nav-cart" onclick="switchView('cart')">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span id="nav-label-cart">Корзина</span>
+            <span class="nav-badge hidden" id="cart-badge">0</span>
+        </button>
+        <button class="nav-item hidden" id="nav-admin" onclick="switchView('admin')">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>CMS</span>
+        </button>
+    </nav>
+
+    <script src="script.js"></script>
+</body>
+</html>
